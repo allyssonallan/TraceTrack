@@ -83,7 +83,7 @@ def output_spreadsheet(task_id):
 
     # finally return the file
     timestr = time.strftime("%Y-%m-%d_%H-%M-%S")
-    return send_file(spreadsheet, attachment_filename="TraceTrack{}.xlsx".format(timestr), as_attachment=True,
+    return send_file(spreadsheet, download_name="TraceTrack{}.xlsx".format(timestr), as_attachment=True,
                      cache_timeout=0)
 
 
@@ -106,8 +106,7 @@ def export_alignment(task_id, al_num):
         return render_template('results.html', display=error.message)
     # finally return the file
     timestr = time.strftime("%Y-%m-%d_%H-%M-%S")
-    return send_file(spreadsheet, attachment_filename="TraceTrack{}.xlsx".format(timestr), as_attachment=True,
-                     cache_timeout=0)
+    return send_file(spreadsheet, download_name="TraceTrack{}.xlsx".format(timestr), as_attachment=True)
 
 
 @app.route("/trace/<task_id>/<int:alignment_index>", methods=['GET'])
