@@ -14,6 +14,7 @@ from tracetrack.entities.record import TraceSeqRecord
 from tracetrack.entities.errors import UnresolvedConflictError
 from tracetrack.entities.scheduler import scheduler
 from tracetrack.tasks import align_sequences_celery, Settings
+import hashlib
 
 ALLOWED_EXTENSIONS = {'zip', 'ab1'}
 ALLOWED_REF_EXTENSIONS = {'csv', 'xlsx', 'fasta', 'fa', 'gb', 'gbk', 'genbank'}
@@ -166,28 +167,24 @@ def number_prefix(string):
     return i
 
 
-def shorten_sheet_names(names_orig, max_length=27, max_iter=25):
-    suffixes = [0] * len(names_orig)
-    names_final = [name[:max_length] for name in names_orig]
-    iteration = 0
-    while len(set(names_final)) < len(names_final) and iteration < max_iter:
-        iteration += 1
-        used = {}
-        for i, name in enumerate(names_final):
-            if names_final.count(name) > 1:
-                number = used.get(name, 0) + 1
-                used[name] = number
-                suffixes[i] = number
-        for i in range(len(names_orig)):
-            suffix = f" ({str(suffixes[i])})" if suffixes[i] > 0 else ""
-            if max_length - len(suffix) < 0:
-                raise ValueError(f"Suffix of sheet name {suffix} is too long!")
-            if len(names_orig[i]) > max_length - len(suffix):
-                suffix = "..." + suffix
-            names_final[i] = f"{names_orig[i][:max_length - len(suffix)]}{suffix}"
+def shorten_sheet_names(names_orig, max_length=27):
+    names_final = []
+    name_count = {}
+
+    for name in names_orig:
+        base_name = name[:max_length - 8]  # Reserve space for counter and hash
+        hash_suffix = hashlib.md5(name.encode()).hexdigest()[:4]  # 4 characters from hash
+        count = name_count.get(base_name, 0)
+        name_count[base_name] = count + 1
+        # Construct the final name with base, counter, and hash
+        final_name = f"{base_name}_{count}_{hash_suffix}"
+        names_final.append(final_name)
+
+    # Check for collisions, which should be highly unlikely with this approach
     if len(set(names_final)) < len(names_final):
         collisions = set([name for name in names_final if names_final.count(name) > 1])
         raise UnresolvedConflictError(f"The colliding sheet names could not be resolved. Collisions: {collisions}")
+
     return names_final
 
 
