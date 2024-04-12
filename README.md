@@ -12,8 +12,9 @@ corresponding reference sequences and displays an overview of resulting alignmen
 
 For more information on how to use the app, see the "Help" page in the application itself.
 
+Don't work with ARM arch. Go to [Run TraceTrack using Conda](https://github.com/allyssonallan/TraceTrack/edit/main/README.md#run-tracetrack-using-conda)
 
-## Run TraceTrack in Docker container
+## <s> Run TraceTrack in Docker container
 
 ### 1. Install Docker
 
@@ -42,7 +43,7 @@ See the next section for info on running locally with flask auto-reload.
 
 ### 5. Frontend
 
-Frontend is available through your browser at http://localhost:5001/
+Frontend is available through your browser at http://localhost:5001/</s>
 
 ## Run TraceTrack using Conda
 
