@@ -7,3 +7,4 @@ __pycache__
 tracetrack.egg-info
 tests/.pytest_cache
 .pytest_cache
+dump.rdb
