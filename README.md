@@ -1,4 +1,4 @@
-** Readme! Pretty good work done by Merck group to quick perform sanger analysis.
+@AllyssonAllan **Readme!** Pretty good work done by Merck group to quick perform Sanger analysis. I made a PR, but instead of wait, I am commiting here some improvements.
 
 
 # TraceTrack
