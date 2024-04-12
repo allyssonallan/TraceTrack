@@ -222,14 +222,17 @@ class TraceSeqRecord(Record):
                 # bad StN ratio -> disregard potential mixed positions
 
             base = self.seq[i]
+            if base.upper() not in TRACE_CHANNELS.keys():  # Skip non-standard bases
+                continue
+
             start, end = self.peak_borders(i)
             areas = {base: self.area_under_peak(start, end, base) for base in self.traces.keys()}
-            peaks = {base: values[pos] for base, values in self.traces.items()}
-            if base != "N":
+            peaks = {base: values[pos] for base, values in self.traces.items() if base in TRACE_CHANNELS.keys()}
+            if base != "N" and base.upper() in peaks:  # Check if base is in peaks to avoid KeyError
                 main_peak = peaks[base.upper()]
                 for letter, area in areas.items():
                     # check for both area and height of peak
-                    if base != letter and area > (areas[base.upper()] * fraction) and peaks[letter] > (main_peak * fraction) \
+                    if base != letter and area > (areas[base.upper()] * fraction) and peaks.get(letter, 0) > (main_peak * fraction) \
                             and self.is_concave(pos, letter):
                         mixed_peaks.append(i)
         return mixed_peaks
@@ -241,14 +244,13 @@ class TraceSeqRecord(Record):
         :param i: position in sequence
         :return: Signal to noise ratio
         """
-        base = self.seq[i]
-        if base.upper() == 'N':
-            return 1
+        base = self.seq[i].upper()
+        if base == 'N' or base not in TRACE_CHANNELS:
+            return 1  # Default signal-to-noise ratio for 'N' or unexpected bases
         start, end = self.peak_borders(i)
-        #base = self.seq[i]
-        areas = {base: self.area_under_peak(start, end, base) for base in self.traces.keys()}
-        primary = areas[base.upper()]
-        secondary = sum([areas[letter.upper()] for letter in areas.keys() if letter != base])
+        areas = {base: self.area_under_peak(start, end, base) for base in TRACE_CHANNELS.keys()}
+        primary = areas.get(base, 0)  # Safely get the primary area, defaulting to 0 if not found
+        secondary = sum([areas[letter] for letter in areas.keys() if letter != base])
         if secondary == 0:
             # a sufficiently high number for positions with no signal from secondary bases
             return 35

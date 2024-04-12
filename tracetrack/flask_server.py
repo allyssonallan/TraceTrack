@@ -83,8 +83,11 @@ def output_spreadsheet(task_id):
 
     # finally return the file
     timestr = time.strftime("%Y-%m-%d_%H-%M-%S")
-    return send_file(spreadsheet, attachment_filename="TraceTrack{}.xlsx".format(timestr), as_attachment=True,
-                     cache_timeout=0)
+    response = send_file(spreadsheet, download_name=f"TraceTrack{timestr}.xlsx", as_attachment=True)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 @app.route("/excel/<task_id>/<al_num>", methods=['GET'])
@@ -106,8 +109,11 @@ def export_alignment(task_id, al_num):
         return render_template('results.html', display=error.message)
     # finally return the file
     timestr = time.strftime("%Y-%m-%d_%H-%M-%S")
-    return send_file(spreadsheet, attachment_filename="TraceTrack{}.xlsx".format(timestr), as_attachment=True,
-                     cache_timeout=0)
+    response = send_file(spreadsheet, download_name=f"TraceTrack{timestr}.xlsx", as_attachment=True)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 @app.route("/trace/<task_id>/<int:alignment_index>", methods=['GET'])
