@@ -1,3 +1,6 @@
+** Readme! Pretty good work done by Merck group to quick perform sanger analysis.
+
+
 # TraceTrack
 
 Sanger sequencing analysis web app. View the [publication](https://biorxiv.org/cgi/content/short/2022.07.28.501824v1) or try the app [online](https://tracetrack.dichlab.org).
